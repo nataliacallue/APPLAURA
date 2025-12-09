@@ -6,8 +6,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>Mi App Rosa</title>
-  <!-- Icono para añadir a la pantalla de inicio (opcional) -->
-  <!-- <link rel="apple-touch-icon" href="/icon-192.png"> -->
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffc0cb">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
   <style>
     :root{
       --pink-1: #ffc0cb;
@@ -27,7 +31,6 @@
       color:var(--text);
     }
 
-    /* Contenedor principal centrado */
     .app{
       min-height:100%;
       display:flex;
@@ -39,6 +42,7 @@
     }
 
     h1{
+      font-family: serif;
       font-size:clamp(20px,6vw,42px);
       margin:0;
       line-height:1.05;
@@ -46,7 +50,6 @@
       text-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
 
-    /* Menú superior izquierda */
     .menu-btn{
       position:fixed;
       top:12px;
@@ -83,7 +86,6 @@
     .hamburger span:nth-child(2){ top:7px; }
     .hamburger span:nth-child(3){ top:14px; }
 
-    /* Panel lateral sencillo */
     .side-panel{
       position:fixed;
       top:0; left:0;
@@ -109,16 +111,16 @@
       border-radius:8px;
       font-weight:600;
       margin-bottom:6px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
+
     .side-panel a:hover{ background:var(--glass); }
 
-    /* Mask cuando el menú está abierto (para cerrar al tocar fuera) */
     .overlay{
       position:fixed; inset:0; background:rgba(0,0,0,0.18); opacity:0; pointer-events:none; transition:opacity .28s ease; z-index:25;
     }
     .overlay.show{ opacity:1; pointer-events:auto; }
 
-    /* Ajustes para iPhone (pantallas pequeñas) */
     @media (max-width:420px){
       .menu-btn{ width:44px;height:44px;border-radius:10px; }
       .side-panel{ padding-top:84px; }
@@ -127,7 +129,6 @@
 </head>
 <body>
   <div class="app">
-    <!-- Botón de menú (esquina superior izquierda) -->
     <button class="menu-btn" id="menuBtn" aria-label="Abrir menú">
       <span class="hamburger" aria-hidden="true">
         <span></span>
@@ -136,7 +137,6 @@
       </span>
     </button>
 
-    <!-- Panel lateral -->
     <nav class="side-panel" id="sidePanel" aria-hidden="true">
       <a href="#">Inicio</a>
       <a href="#">Perfil</a>
@@ -146,7 +146,6 @@
 
     <div class="overlay" id="overlay"></div>
 
-    <!-- Texto centrado en la pantalla -->
     <main>
       <h1>Rare Beauty</h1>
       <p style="opacity:.85;margin-top:12px;font-weight:500;"></p>
@@ -168,10 +167,13 @@
     menuBtn.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', toggleMenu);
 
-    // Cerrar con Escape
     document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ if(sidePanel.classList.contains('open')) toggleMenu(); } });
 
-    // Mejor experiencia si se añade a la pantalla de inicio en iPhone: al abrirse como webapp aparece sin barras.
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./service-worker.js")
+        .then(() => console.log("SW registrado"))
+        .catch(err => console.log("Error SW:", err));
+    }
   </script>
 </body>
 </html>
